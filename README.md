@@ -1,0 +1,2 @@
+# SNG_MathematicalModeling_GameofDistribution_240820
+中福会少年宫2024暑期数学建模班 24/08/20课程
