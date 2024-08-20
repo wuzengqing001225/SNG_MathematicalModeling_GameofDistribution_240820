@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>博弈模拟器</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- 引入 Chart.js 库 -->
+</head>
+<body>
+    <div class="container">
+        <!-- A策略面板 -->
+        <div class="panel">
+            <h2>策略 A</h2>
+            <div class="code-display">
+                <pre id="code_a_display">代码（无上传则使用默认策略）</pre>
+            </div>
+            <form id="uploadAForm" enctype="multipart/form-data">
+                <input type="file" name="file_a" id="file_a">
+                <button type="button" class="upload-btn" onclick="uploadA()">上传策略 A</button>
+            </form>
+        </div>
+
+        <!-- 中间面板 -->
+        <div class="middle-panel">
+            <h2>博弈结果</h2>
+            <p>回合数: <span id="round_number">0</span></p>
+            <p>最终报价: <span id="final_offer"></span></p>
+            <p>是否接受: <span id="accepted"></span></p>
+            <canvas id="historyChart"></canvas> <!-- 图表区域 -->
+            <div class="buttons">
+                <button type="button" onclick="runSimulation()">决斗！</button>
+                <button type="button" onclick="restartSimulation()">重新开始</button>
+            </div>
+        </div>
+
+        <!-- B策略面板 -->
+        <div class="panel">
+            <h2>策略 B</h2>
+            <div class="code-display">
+                <pre id="code_b_display">代码（无上传则使用默认策略）</pre>
+            </div>
+            <form id="uploadBForm" enctype="multipart/form-data">
+                <input type="file" name="file_b" id="file_b">
+                <button type="button" class="upload-btn" onclick="uploadB()">上传策略 B</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript 放置在页面底部 -->
+    <script>
+        let historyChart;
+
+        function uploadA() {
+            const fileInput = document.getElementById('file_a');
+            const formData = new FormData();
+            formData.append('file_a', fileInput.files[0]);
+
+            fetch('/upload_a', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('code_a_display').innerText = data.code_a;
+            });
+        }
+
+        function uploadB() {
+            const fileInput = document.getElementById('file_b');
+            const formData = new FormData();
+            formData.append('file_b', fileInput.files[0]);
+
+            fetch('/upload_b', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('code_b_display').innerText = data.code_b;
+            });
+        }
+
+        function runSimulation() {
+            fetch('/run_simulation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                // 更新博弈结果
+                document.getElementById('round_number').innerText = data.round_number;
+                document.getElementById('final_offer').innerText = data.final_offer;
+                document.getElementById('accepted').innerText = data.accepted ? '接受' : '拒绝';
+
+                // 更新 A 的报价历史图表
+                updateHistoryChart(data.history_a);
+            });
+        }
+
+        function restartSimulation() {
+            location.reload();
+        }
+
+        function updateHistoryChart(history_a) {
+            const ctx = document.getElementById('historyChart').getContext('2d');
+
+            if (historyChart) {
+                historyChart.destroy(); // 销毁现有图表，以便重新创建
+            }
+
+            historyChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: history_a.map((_, index) => index + 1), // 回合数作为 x 轴
+                    datasets: [{
+                        label: 'A 的报价变化',
+                        data: history_a, // A 的报价历史作为 y 轴
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 2,
+                        fill: false
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: '回合数'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: '报价'
+                            },
+                            beginAtZero: true,
+                            max: 100000 // 设置 y 轴最大值为 100000
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
