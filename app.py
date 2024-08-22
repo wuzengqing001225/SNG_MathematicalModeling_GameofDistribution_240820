@@ -83,6 +83,53 @@ def upload_b():
     
     return jsonify({"code_b": code_b})
 
+@app.route('/tournament')
+def tournament():
+    a_strategies = []
+    b_strategies = []
+
+    # 从上传文件夹中读取所有策略
+    for filename in os.listdir(UPLOAD_FOLDER):
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        if filename.endswith('_a.py'):
+            a_strategies.append((filename, load_strategy(file_path, default_a_strategy)))
+        elif filename.endswith('_b.py'):
+            b_strategies.append((filename, load_strategy(file_path, default_b_strategy)))
+
+    results = []
+
+    print(a_strategies)
+
+    # 进行两两对决
+    for a_name, a_strategy in a_strategies:
+        for b_name, b_strategy in b_strategies:
+            history_a = []
+            history_b = []
+            accepted = False
+            final_offer = 0
+            
+            for round_number in range(100):
+                offer = a_strategy(history_a, history_b)
+                history_a.append(offer)
+                accept = b_strategy(history_a, history_b)
+                history_b.append(accept)
+
+                if accept:
+                    accepted = True
+                    final_offer = offer
+                    break
+            
+            # 记录每次对决结果
+            results.append({
+                "a_name": a_name,
+                "b_name": b_name,
+                "round_number": round_number,
+                "final_offer": final_offer,
+                "accepted": accepted
+            })
+
+    return render_template('tournament.html', results=results)
+
 @app.route('/run_simulation', methods=['POST'])
 def run_simulation():
     a_strategy_path = session.get('a_strategy_path', None)
