@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>策略比赛结果</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style2.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>策略比赛汇总</h1>
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th>策略 A</th>
+                    <th>策略 B</th>
+                    <th>回合数</th>
+                    <th>最终报价</th>
+                    <th>是否接受</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                <tr>
+                    <td>{{ result['a_name'] }}</td>
+                    <td>{{ result['b_name'] }}</td>
+                    <td>{{ result['round_number'] }}</td>
+                    <td>{{ result['final_offer'] }}</td>
+                    <td>{{ '接受' if result['accepted'] else '拒绝' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="back-link">
+            <a href="{{ url_for('index') }}">返回首页</a>
+        </div>
+    </div>
+</body>
+</html>
