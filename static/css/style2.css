@@ -47,24 +47,32 @@ h1 {
     background-color: #f9f9f9;
 }
 
+/* 特殊排名样式：金、银、铜 */
+.results-table tr.gold {
+    background-color: gold !important;
+    font-weight: bold;
+}
+
+.results-table tr.silver {
+    background-color: silver !important;
+    font-weight: bold;
+}
+
+.results-table tr.bronze {
+    background-color: #cd7f32 !important;
+    font-weight: bold;
+}
+
+/* 普通行的悬停效果 */
 .results-table tr:hover {
     background-color: #f1f1f1;
 }
 
-/* 金银铜样式 */
-.gold {
-    background-color: gold;
-    font-weight: bold;
-}
-
-.silver {
-    background-color: silver;
-    font-weight: bold;
-}
-
-.bronze {
-    background-color: #cd7f32;
-    font-weight: bold;
+/* 避免特殊排名样式被悬停效果覆盖 */
+.results-table tr.gold:hover,
+.results-table tr.silver:hover,
+.results-table tr.bronze:hover {
+    background-color: inherit !important;  /* 保持原有背景色 */
 }
 
 /* 返回按钮样式 */
