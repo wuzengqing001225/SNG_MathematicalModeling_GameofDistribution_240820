@@ -15,9 +15,9 @@
                     <th>玩家名</th>
                     <th>策略 A</th>
                     <th>策略 B</th>
-                    <th>回合数</th>
-                    <th>最终报价</th>
-                    <th>是否接受</th>
+                    <th>平均最终报价</th>
+                    <th>接受率</th>
+                    <th>平均回合数</th>
                     <th>排名</th>
                 </tr>
             </thead>
@@ -27,9 +27,9 @@
                     <td>{{ result['player_name'] }}</td>
                     <td>{{ result['a_name'] }}</td>
                     <td>{{ result['b_name'] }}</td>
-                    <td>{{ result['round_number'] }}</td>
-                    <td>{{ result['final_offer'] }}</td>
-                    <td>{{ '接受' if result['accepted'] else '拒绝' }}</td>
+                    <td>{{ "%.2f" % result['average_offer'] }}</td>
+                    <td>{{ "%.2f" % (result['acceptance_rate'] * 100) }}%</td>
+                    <td>{{ "%.2f" % result['total_rounds'] }}</td>
                     <td>{{ loop.index }}</td>
                 </tr>
                 {% endfor %}
