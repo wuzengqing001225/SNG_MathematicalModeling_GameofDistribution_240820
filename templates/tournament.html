@@ -14,8 +14,7 @@
                 <tr>
                     <th>玩家名</th>
                     <th>策略 A</th>
-                    <th>策略 B</th>
-                    <th>平均最终报价</th>
+                    <th>平均收益</th>
                     <th>接受率</th>
                     <th>平均回合数</th>
                     <th>排名</th>
@@ -26,8 +25,7 @@
                 <tr class="{% if loop.index == 1 %}gold{% elif loop.index == 2 %}silver{% elif loop.index == 3 %}bronze{% endif %}">
                     <td>{{ result['player_name'] }}</td>
                     <td>{{ result['a_name'] }}</td>
-                    <td>{{ result['b_name'] }}</td>
-                    <td>{{ "%.2f" % result['average_offer'] }}</td>
+                    <td>{{ "%.2f" % result['average_gain'] }}</td>
                     <td>{{ "%.2f" % (result['acceptance_rate'] * 100) }}%</td>
                     <td>{{ "%.2f" % result['total_rounds'] }}</td>
                     <td>{{ loop.index }}</td>
