@@ -108,7 +108,8 @@ def tournament():
             total_rounds = 0
             
             # 运行 100 次模拟
-            for _ in range(100):
+            n = 100
+            for _ in range(n):
                 history_a = []
                 history_b = []
                 accepted = False
@@ -130,8 +131,8 @@ def tournament():
                 total_rounds += round_number
 
             # 计算平均报价和接受率
-            average_offer = total_offer / 50
-            acceptance_rate = total_accepted / 50
+            average_offer = total_offer / n
+            acceptance_rate = total_accepted / n
 
             results.append({
                 "player_name": player_name,
@@ -139,7 +140,7 @@ def tournament():
                 "b_name": b_name,
                 "average_offer": average_offer,
                 "acceptance_rate": acceptance_rate,
-                "total_rounds": total_rounds / 50  # 平均回合数
+                "total_rounds": total_rounds / n  # 平均回合数
             })
 
     # 按平均报价排序
