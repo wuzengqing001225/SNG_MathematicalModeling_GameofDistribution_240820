@@ -75,7 +75,7 @@ def upload_b():
         file_b_path = os.path.join(app.config['UPLOAD_FOLDER'], file_b.filename)
         file_b.save(file_b_path)
         session['b_strategy_path'] = file_b_path  # 存储文件路径到session
-        with open(file_b_path, 'r') as f:
+        with open(file_b_path, 'r', encoding="utf-8") as f:
             code_b = f.read()
     else:
         session['b_strategy_path'] = None
