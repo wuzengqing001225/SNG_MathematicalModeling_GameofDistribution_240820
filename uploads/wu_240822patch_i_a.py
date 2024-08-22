@@ -1,6 +1,6 @@
-import math
-
 def optimized_a_strategy(history_a, history_b):
+    import math
+    
     rounds_passed = len(history_a)
     if rounds_passed < 90:
         return 20000
