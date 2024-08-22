@@ -99,16 +99,16 @@ def tournament():
 
     # 进行两两对决，运行 100 次并计算平均结果
     for a_name, a_strategy in a_strategies:
-        for b_name, b_strategy in b_strategies:
-            player_name = a_name[:-5] if a_name[:-5] == b_name[:-5] else ''
-            if 'default' in player_name: player_name = player_name.replace("default", "baseline")
+        total_gain = 0
+        total_accepted = 0
+        total_rounds = 0
+        player_name = a_name[:-5]
+        if 'default' in player_name: player_name = player_name.replace("default", "baseline")
 
-            total_offer = 0
-            total_accepted = 0
-            total_rounds = 0
-            
-            # 运行 100 次模拟
-            n = 100
+        # 运行 100 次模拟
+        n = 100
+
+        for b_name, b_strategy in b_strategies:
             for _ in range(n):
                 history_a = []
                 history_b = []
@@ -123,28 +123,27 @@ def tournament():
 
                     if accept:
                         accepted = True
-                        final_offer = offer
+                        final_offer = offer if offer > 0 else 0
                         break
 
-                total_offer += final_offer
+                total_gain += (100000 - final_offer) if accepted else 0
                 total_accepted += 1 if accepted else 0
                 total_rounds += round_number
 
-            # 计算平均报价和接受率
-            average_offer = total_offer / n
-            acceptance_rate = total_accepted / n
+        # 计算平均报价和接受率
+        average_gain = total_gain / n / len(b_strategies)
+        acceptance_rate = total_accepted / n / len(b_strategies)
 
-            results.append({
-                "player_name": player_name,
-                "a_name": a_name,
-                "b_name": b_name,
-                "average_offer": average_offer,
-                "acceptance_rate": acceptance_rate,
-                "total_rounds": total_rounds / n  # 平均回合数
-            })
+        results.append({
+            "player_name": player_name,
+            "a_name": a_name,
+            "average_gain": average_gain,
+            "acceptance_rate": acceptance_rate,
+            "total_rounds": total_rounds / n / len(b_strategies)  # 平均回合数
+        })    
 
     # 按平均报价排序
-    results = sorted(results, key=lambda x: (x['acceptance_rate'] == 0, x['average_offer']))
+    results = sorted(results, key=lambda x: (x['average_gain']), reverse=True)
 
     return render_template('tournament.html', results=results)
 
