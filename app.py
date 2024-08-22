@@ -88,7 +88,6 @@ def tournament():
     a_strategies = []
     b_strategies = []
 
-    # 从上传文件夹中读取所有策略
     for filename in os.listdir(UPLOAD_FOLDER):
         file_path = os.path.join(UPLOAD_FOLDER, filename)
         if filename.endswith('_a.py'):
@@ -98,11 +97,11 @@ def tournament():
 
     results = []
 
-    print(a_strategies)
-
-    # 进行两两对决
     for a_name, a_strategy in a_strategies:
         for b_name, b_strategy in b_strategies:
+            player_name = a_name[:-5] if a_name[:-5] == b_name[:-5] else ''
+            if "default" in player_name: player_name = player_name.replace("default", "baseline")
+
             history_a = []
             history_b = []
             accepted = False
@@ -119,14 +118,17 @@ def tournament():
                     final_offer = offer
                     break
             
-            # 记录每次对决结果
             results.append({
+                "player_name": player_name,
                 "a_name": a_name,
                 "b_name": b_name,
                 "round_number": round_number,
                 "final_offer": final_offer,
                 "accepted": accepted
             })
+
+    # 先按照 accepted 排序，将拒绝的对决结果排在最后，接受的对决结果按照最终报价排序
+    results = sorted(results, key=lambda x: (not x['accepted'], x['final_offer'] if x['accepted'] else float('inf')))
 
     return render_template('tournament.html', results=results)
 
