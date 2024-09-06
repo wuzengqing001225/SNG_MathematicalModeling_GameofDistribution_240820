@@ -10,7 +10,6 @@
     <div class="container">
         <h1>淘汰赛结果</h1>
         
-        <!-- 包含两个表格的容器 -->
         <div class="flex-container">
             <!-- A 策略的表格 -->
             <div class="table-container">
@@ -58,6 +57,31 @@
                 </table>
             </div>
         </div>
+
+        <!-- 显示每轮最高收益 -->
+        <h2>每回合最高收益</h2>
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th>回合</th>
+                    <th>A 策略最高收益</th>
+                    <th>收益值</th>
+                    <th>B 策略最高收益</th>
+                    <th>收益值</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for round in highest_per_round %}
+                <tr>
+                    <td>{{ round['round'] }}</td>
+                    <td>{{ round['highest_a_name'] }}</td>
+                    <td>{{ "%.2f" % round['highest_a_gain'] }}</td>
+                    <td>{{ round['highest_b_name'] }}</td>
+                    <td>{{ "%.2f" % round['highest_b_gain'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
         <div class="back-link">
             <a href="{{ url_for('index') }}">返回首页</a>
