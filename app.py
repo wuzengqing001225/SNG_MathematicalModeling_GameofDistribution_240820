@@ -147,6 +147,117 @@ def tournament():
 
     return render_template('tournament.html', results=results)
 
+@app.route('/elimination_tournament')
+def elimination_tournament():
+    a_strategies = []
+    b_strategies = []
+
+    # 从上传文件夹中读取所有策略
+    for filename in os.listdir(UPLOAD_FOLDER):
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        if filename.endswith('_a.py'):
+            a_strategies.append((filename, load_strategy(file_path, default_a_strategy)))
+        elif filename.endswith('_b.py'):
+            b_strategies.append((filename, load_strategy(file_path, default_b_strategy)))
+
+    a_ranking = []
+    b_ranking = []
+
+    # 每回合逐步淘汰一个a和一个b策略
+    round_counter = 1
+    while len(a_strategies) > 1 and len(b_strategies) > 1:
+        a_scores = []
+        b_scores = []
+
+        # 计算每个a策略与所有b策略博弈的平均收益
+        for a_name, a_strategy in a_strategies:
+            total_gain = 0
+            for _, b_strategy in b_strategies:
+                history_a = []
+                history_b = []
+                accepted = False
+                final_offer = 0
+
+                for _ in range(100):  # 最大回合数为100
+                    offer = a_strategy(history_a, history_b)
+                    history_a.append(offer)
+                    accept = b_strategy(history_a, history_b)
+                    history_b.append(accept)
+
+                    if accept:
+                        accepted = True
+                        final_offer = offer
+                        break
+
+                total_gain += final_offer if accepted else 0  # 如果被接受，计入收益
+
+            avg_gain = total_gain / len(b_strategies)
+            a_scores.append((a_name, avg_gain))
+
+        # 计算每个b策略与所有a策略博弈的平均收益
+        for b_name, b_strategy in b_strategies:
+            total_gain = 0
+            for _, a_strategy in a_strategies:
+                history_a = []
+                history_b = []
+                accepted = False
+                final_offer = 0
+
+                for _ in range(100):  # 最大回合数为100
+                    offer = a_strategy(history_a, history_b)
+                    history_a.append(offer)
+                    accept = b_strategy(history_a, history_b)
+                    history_b.append(accept)
+
+                    if accept:
+                        accepted = True
+                        final_offer = offer
+                        break
+
+                total_gain += 100000 - final_offer if accepted else 0  # B的收益是100,000减去A的报价
+
+            avg_gain = total_gain / len(a_strategies)
+            b_scores.append((b_name, avg_gain))
+
+        # 找到最低收益的a和b策略
+        a_scores.sort(key=lambda x: x[1])
+        b_scores.sort(key=lambda x: x[1])
+
+        a_eliminated = a_scores[0]
+        b_eliminated = b_scores[0]
+
+        a_strategies = [s for s in a_strategies if s[0] != a_eliminated[0]]
+        b_strategies = [s for s in b_strategies if s[0] != b_eliminated[0]]
+
+        a_ranking.append({
+            "name": a_eliminated[0],
+            "avg_gain": a_eliminated[1],
+            "round_eliminated": round_counter
+        })
+        b_ranking.append({
+            "name": b_eliminated[0],
+            "avg_gain": b_eliminated[1],
+            "round_eliminated": round_counter
+        })
+
+        round_counter += 1
+
+    # 将最后剩下的a和b策略设为第一名
+    if len(a_strategies) == 1:
+        a_ranking.append({
+            "name": a_strategies[0][0],
+            "avg_gain": 0,  # 最终第一名没有淘汰时的收益
+            "round_eliminated": round_counter
+        })
+    if len(b_strategies) == 1:
+        b_ranking.append({
+            "name": b_strategies[0][0],
+            "avg_gain": 0,  # 最终第一名没有淘汰时的收益
+            "round_eliminated": round_counter
+        })
+
+    return render_template('elimination_tournament.html', a_ranking=a_ranking, b_ranking=b_ranking)
+
 @app.route('/run_simulation', methods=['POST'])
 def run_simulation():
     a_strategy_path = session.get('a_strategy_path', None)
