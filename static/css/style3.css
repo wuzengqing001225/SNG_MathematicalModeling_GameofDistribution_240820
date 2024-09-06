@@ -1,0 +1,103 @@
+/* 页面全局样式 */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px; /* 增加宽度以适应并列表格 */
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    text-align: center;
+}
+
+/* 标题样式 */
+h1 {
+    text-align: center;
+    color: #333;
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+    font-size: 1.8em;
+    margin-bottom: 10px;
+}
+
+/* Flexbox 布局，用于表格并列显示 */
+.flex-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.table-container {
+    width: 48%; /* 每个表格占据 48% 的宽度 */
+}
+
+/* 表格样式 */
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.results-table th, .results-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
+    font-size: 1em;
+}
+
+.results-table th {
+    background-color: #4CAF50;
+    color: white;
+    font-size: 1.2em;
+}
+
+.results-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* 金银铜样式 */
+.results-table tr.gold {
+    background-color: gold !important;
+    font-weight: bold;
+}
+
+.results-table tr.silver {
+    background-color: silver !important;
+    font-weight: bold;
+}
+
+.results-table tr.bronze {
+    background-color: #cd7f32 !important;
+    font-weight: bold;
+}
+
+/* 返回按钮样式 */
+.back-link {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.back-link a {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1.2em;
+    transition: background-color 0.3s ease;
+}
+
+.back-link a:hover {
+    background-color: #45a049;
+}
