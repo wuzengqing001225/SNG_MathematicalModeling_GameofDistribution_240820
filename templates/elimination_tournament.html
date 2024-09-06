@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>淘汰赛结果</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style3.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>淘汰赛结果</h1>
+        
+        <!-- 包含两个表格的容器 -->
+        <div class="flex-container">
+            <!-- A 策略的表格 -->
+            <div class="table-container">
+                <h2>A 策略排名</h2>
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>策略 A</th>
+                            <th>平均收益</th>
+                            <th>排名</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for result in a_ranking %}
+                        <tr class="{% if loop.index == 1 %}gold{% elif loop.index == 2 %}silver{% elif loop.index == 3 %}bronze{% endif %}">
+                            <td>{{ result['name'] }}</td>
+                            <td>{{ "%.2f" % result['avg_gain'] }}</td>
+                            <td>{{ loop.index }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- B 策略的表格 -->
+            <div class="table-container">
+                <h2>B 策略排名</h2>
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>策略 B</th>
+                            <th>平均收益</th>
+                            <th>排名</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for result in b_ranking %}
+                        <tr class="{% if loop.index == 1 %}gold{% elif loop.index == 2 %}silver{% elif loop.index == 3 %}bronze{% endif %}">
+                            <td>{{ result['name'] }}</td>
+                            <td>{{ "%.2f" % result['avg_gain'] }}</td>
+                            <td>{{ loop.index }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="back-link">
+            <a href="{{ url_for('index') }}">返回首页</a>
+        </div>
+    </div>
+</body>
+</html>
